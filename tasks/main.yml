@@ -1,0 +1,43 @@
+---
+# tasks file for cnt-tools
+#
+    - name: Check installed packages
+      package_facts:
+        manager: auto
+   
+    - name: "[HELM] Add an Apt signing key"
+      apt_key:
+        url: https://baltocdn.com/helm/signing.asc
+        state: present
+
+    - name: "[HELM] Install required packages"
+      apt:
+        name:
+          - apt-transport-https  
+        state: present
+
+    - name: "[HELM] Add debian helm url in repo"
+      template:
+        src: templates/helm-stable-debian.list.j2
+        dest: /etc/apt/sources.list.d/helm-stable-debian.list
+        owner: root
+        group: root
+        mode: '0644'
+   
+    - name: "[HELM] Update packages"
+      apt:
+        name:
+          - helm
+        update_cache: yes
+
+    - name: "[OPENSTACK CLIENT] Install required packages" 
+      apt:
+        name:
+          - python-dev 
+          - python-pip
+        state: present
+
+    - name: "[OPENSTACK CLIENT"
+      pip:
+        name:
+          - python-openstackclient
